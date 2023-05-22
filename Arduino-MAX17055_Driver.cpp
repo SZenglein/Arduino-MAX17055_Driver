@@ -309,7 +309,7 @@ void MAX17055::writeReg16Bit(uint8_t reg, uint16_t value)
   _wire->write(reg);
   _wire->write( value       & 0xFF); // value low byte
   _wire->write((value >> 8) & 0xFF); // value high byte
-  uint8_t last_status = _wire->endTransmission();
+  _wire->endTransmission();
 }
 
 uint16_t MAX17055::readReg16Bit(uint8_t reg)
@@ -317,7 +317,7 @@ uint16_t MAX17055::readReg16Bit(uint8_t reg)
   uint16_t value = 0;  
   _wire->beginTransmission(I2CAddress); 
   _wire->write(reg);
-  uint8_t last_status = _wire->endTransmission(false);
+  _wire->endTransmission(false);
   
   _wire->requestFrom(I2CAddress, (uint8_t) 2); 
   value  = _wire->read();

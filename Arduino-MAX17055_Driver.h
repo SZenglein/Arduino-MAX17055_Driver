@@ -28,8 +28,8 @@
 * 
 **********************************************************************/
 
-#ifndef Arduino-MAX17055_Driver.h_h
-#define Arduino-MAX17055_Driver.h_h
+#ifndef Arduino_MAX17055_Driver_h 
+#define Arduino_MAX17055_Driver_h 
 
 #include <Arduino.h>
 #include <Wire.h>

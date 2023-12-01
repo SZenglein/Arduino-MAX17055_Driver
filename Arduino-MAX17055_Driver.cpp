@@ -100,8 +100,8 @@ bool MAX17055::init(uint16_t batteryCapacity, uint16_t vEmpty, uint16_t vRecover
             writeReg16Bit(CommandReg, 0x0);
 
             // 3.1 OPTION 1 EZ Config (no INI file is needed): 
-            setCapacity(batteryCapacity);
-            writeReg16Bit(DQAcc, batteryCapacity/32);
+            setDesignCapacity(batteryCapacity);
+            writeReg16Bit(DQAcc, batteryCapacity / 16);
             // writeReg16Bit(IchgTerm, 0x640); // leave default for now
             setEmptyVoltage(vEmpty, vRecovery);
 
@@ -163,12 +163,6 @@ void MAX17055::resetPOR()
     writeReg16Bit(Status,readReg16Bit(Status)&0xFFFD); //reset POR Status
 }
 
-void MAX17055::setCapacity(uint16_t batteryCapacity)
-{
-	//calcuation based on AN6358 page 13 figure 1.3 for Capacity, but reversed to get the register value 
-	writeReg16Bit(DesignCap, batteryCapacity*2);	
-}	
-
 void MAX17055::setEmptyVoltage(uint16_t vEmpty, uint16_t vRecovery){
     uint16_t regVal = (vEmpty << 7) & 0xFF80;
 
@@ -212,10 +206,21 @@ float MAX17055::getEmptySOCHold(){
     return (float) emptySOCHold / 2.0f;
 }
 
-float MAX17055::getCapacity()
+void MAX17055::setDesignCapacity(uint16_t batteryCapacity)
 {
-   	// uint16_t capacity_raw = readReg16Bit(RepCap);
+    uint16_t capacity_raw = (uint16_t) (batteryCapacity / capacity_multiplier_mAH);
+    writeReg16Bit(DesignCap, capacity_raw);	
+}	
+
+float MAX17055::getDesignCapacity()
+{
    	uint16_t capacity_raw = readReg16Bit(DesignCap);
+	return (capacity_raw * capacity_multiplier_mAH);
+}
+
+float MAX17055::getReportedCapacity()
+{
+   	uint16_t capacity_raw = readReg16Bit(RepCap);
 	return (capacity_raw * capacity_multiplier_mAH);
 }
 

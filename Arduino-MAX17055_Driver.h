@@ -135,7 +135,7 @@ class MAX17055
     float getInstantaneousCurrent();
     float getAverageVoltage();
     float getInstantaneousVoltage();
-    void  setCapacity(uint16_t batteryCapacity);
+    void  setDesignCapacity(uint16_t batteryCapacity);
     // resolution is 10mV (330=3.3V)
     void setEmptyVoltage(uint16_t vEmpty, uint16_t vRecovery);
     uint16_t getEmptyVoltage();
@@ -148,7 +148,8 @@ class MAX17055
     void setEmptySOCHold(float percentage);
     float getEmptySOCHold();
 
-    float getCapacity();
+    float getReportedCapacity();
+    float getDesignCapacity();
     void  setResistSensor(float resistorValue); 
     float getResistSensor(); 
     float getSOC(); //SOC = State of Charge 

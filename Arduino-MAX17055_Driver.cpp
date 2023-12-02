@@ -80,12 +80,13 @@ bool MAX17055::init(uint16_t batteryCapacity, uint16_t vEmpty, uint16_t vRecover
     byte error = _wire->endTransmission();
     if (error == 0) //Device Acknowledged
     {
-        // TODO: never used anyway, values other than 0.01 not supported ?
         setResistSensor(resistSensor);
 
         // see MAX17055 Software Implementation Guide
         // 1.
         por = getPOR();
+        // TODO: additionally check if design capacity changed, that indicates a big error 
+
         if (por)
         {
             // 2. do not continue until FSTAT.DNR == 0
@@ -227,6 +228,8 @@ float MAX17055::getReportedCapacity()
 void MAX17055::setResistSensor(float resistorValue)
 {
 	resistSensor = resistorValue;
+    capacity_multiplier_mAH = (5e-3)/resistSensor;
+    current_multiplier_mV = (1.5625e-3)/resistSensor;
 }
 
 float MAX17055::getResistSensor()

@@ -85,8 +85,19 @@ bool MAX17055::init(uint16_t batteryCapacity, uint16_t vEmpty, uint16_t vRecover
         // see MAX17055 Software Implementation Guide
         // 1.
         por = getPOR();
-        // TODO: additionally check if design capacity changed, that indicates a big error 
+        
+        // additionally check if design capacity or other important settings changed
+        // it can happen the chip loses its settings for some reason without triggering POR
+        // this is a workaround to prevent that
+        bool capacityMatches = abs(getDesignCapacity() - batteryCapacity) < 10;
+        bool voltageMatches = getEmptyVoltage() == vEmpty;
+        bool chemistryMatches = (getModelCfg() & 0x00F0) == ((uint16_t) modelID & 0x00F0);
 
+        if (!capacityMatches || !voltageMatches || !chemistryMatches) {
+            // ignore hardware POR if settings changed
+            por = true;
+        }
+        
         if (por)
         {
             // 2. do not continue until FSTAT.DNR == 0
